@@ -2,57 +2,83 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import pickle
-from six.moves import urllib
-
 import tflearn
+import tensorflow as tf
 from tflearn.data_utils import *
+import re
+from builtins import any as b_any
 
-path = "lotr_data.txt"
+tf.logging.set_verbosity(tf.logging.ERROR)
+
+ID = "TrumpGen"
+path = "./text.txt"
 char_idx_file = 'char_idx.pickle'
-
-# Change to path of my own github folder
-#if not os.path.isfile(path):
-#    urllib.request.urlretrieve("https://raw.githubusercontent.com/tflearn/tflearn.github.io/master/resources/shakespeare_input.txt", path)
 
 maxlen = 25
 
 char_idx = None
 if os.path.isfile(char_idx_file):
-  print('Loading previous char_idx')
-  char_idx = pickle.load(open(char_idx_file, 'rb'))
+    print('Loading previous char_idx')
+    char_idx = pickle.load(open(char_idx_file, 'rb'))
 
 X, Y, char_idx = \
-    textfile_to_semi_redundant_sequences(path, seq_maxlen=maxlen, redun_step=10)
+    textfile_to_semi_redundant_sequences(
+        path, seq_maxlen=maxlen, redun_step=1)
 
-pickle.dump(char_idx, open(char_idx_file,'wb'))
+pickle.dump(char_idx, open(char_idx_file, 'wb'))
+tflearn.init_graph(num_cores=8, gpu_memory_fraction=0.5)
 
-g = tflearn.input_data([None, maxlen, len(char_idx)])
-g = tflearn.lstm(g, 128, return_seq=True)
-g = tflearn.dropout(g, 0.5)
-g = tflearn.lstm(g, 128, return_seq=True)
-g = tflearn.dropout(g, 0.5)
-g = tflearn.lstm(g, 128)
-g = tflearn.dropout(g, 0.5)
-g = tflearn.fully_connected(g, len(char_idx), activation='softmax')
-g = tflearn.regression(g, optimizer='adam', loss='categorical_crossentropy',
-                       learning_rate=0.001)
+# Instantiating checkpoint finder
+checkpoint = False
+list_of_files = os.listdir()
+checkpoint_type = ".data-00000-of-00001"
+if b_any(checkpoint_type in x for x in list_of_files):
+    checkpoint = True
 
-m = tflearn.SequenceGenerator(g, dictionary=char_idx,
-                              seq_maxlen=maxlen,
-                              clip_gradients=5.0,
-                              checkpoint_path='model_lotr')
+    def extract_number(f):
+        s = re.findall("(\d+).data-00000-of-00001", f)
+        return (int(s[0]) if s else -1, f)
+    target = (max(list_of_files, key=extract_number))
+    target = target.split('.')
+    target = target[0]
 
-#for i in range(1):
-seed = random_sequence_from_textfile(path, maxlen)
-m.fit(X, Y, validation_set=0.1, batch_size=128,
-      n_epoch=1, run_id='lotr')
+# Begin Main loop
+with tf.device('/gpu:0'):
+    # Launch tensorboard
+    #os.spawnl(os.P_NOWAIT, "tensorboard --logdir='/tmp/tflearn_logs/" + ID + "'")
+    #os.spawnl(os.P_NOWAIT, "start \"\" http://localhost:6006")
+    # Building layers in network
+    g = tflearn.input_data([None, maxlen, len(char_idx)])
+    g = tflearn.lstm(g, 128, return_seq=True)
+    g = tflearn.dropout(g, 0.5)
+    g = tflearn.lstm(g, 128, return_seq=True)
+    g = tflearn.dropout(g, 0.5)
+    g = tflearn.lstm(g, 128)
+    g = tflearn.dropout(g, 0.5)
+    g = tflearn.fully_connected(g, len(char_idx), activation='softmax')
+    g = tflearn.regression(g, optimizer='adam', loss='categorical_crossentropy',
+                           learning_rate=0.001)
 
-# Create ten sentences and add them to the list.
-the_awesome_lotr_sentences_file = open('the_awesome_lotr_sentences_file.txt', 'w')
+    # stating model is to be used in tflearns sequence generator template
+    m = tflearn.SequenceGenerator(g, dictionary=char_idx,
+                                  seq_maxlen=maxlen,
+                                  clip_gradients=5.0,
+                                  checkpoint_path='model_trump2',
+                                  max_checkpoints=10, tensorboard_verbose=3)
+    # checking if checkpoint
+    if checkpoint is True:
+        m.load(target)
+    seed = random_sequence_from_textfile(path, maxlen)
+    m.fit(X, Y, validation_set=0.1, batch_size=128,
+          n_epoch=100, run_id='Trumpish2')
 
+# Create ten sentences and add them to a file
+the_Trump_file = open('Trumpish2.txt', 'w')
+i = 0
 for i in range(10):
-  # I dare you to watch this video and then read the variable below without laughing
-  # https://www.youtube.com/watch?v=9U2pINNSpHE
-  gandaalfff = m.generate(600, temperature=1.0, seq_seed=seed) #random sentence
-  the_awesome_lotr_sentences_file.write("\r%s\n" % gandaalfff)
-  print('GANDALLFFFFF sentence: ' + i)
+    Trumping = m.generate(600, temperature=1.0,
+                          seq_seed=seed)  # random sentence
+    the_Trump_file.write("\r%s\n" % Trumping)
+    print('Line: ')
+    i = i + 1
+    print()
