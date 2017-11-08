@@ -1,18 +1,19 @@
-#Tensorflow Chatbot
-Tensorflow Chatbot Demo by @Sirajology on [Youtube](https://youtu.be/SJDEOWLHYVo)
+#Tensorflow Text generator
+
+Derrivative work of: https://github.com/mickvanhulst/tf_chatbot_lotr (Made as part of Sirajology's challenge)
 
 Overview
 ============
-This is the full code for 'How to Make an Amazing Tensorflow Chatbot Easily' by @Sirajology on [Youtube](https://youtu.be/SJDEOWLHYVo). In this demo code, we implement Tensorflows [Sequence to Sequence](https://www.tensorflow.org/versions/r0.12/tutorials/seq2seq/index.html) model to train a
-chatbot on the [Cornell Movie Dialogue dataset](https://www.cs.cornell.edu/~cristian/Cornell_Movie-Dialogs_Corpus.html). After training for a few hours, the bot is able to hold a fun conversation.
+This code is designed to take in a text file (in this case it's Trump speech transcripts). After sufficent training (I was able to get it to a loss of 0.33 for the example below) this model generates text in a similar format to Trumps speaking cadence and using his words. But similar to mickvanhulst's findings, the results are... creative. This gets better with more training, but at 0.22 the results are not always english. 
 
 
 Dependencies
 ============
 * numpy
 * scipy 
-* six
 * tensorflow (https://www.tensorflow.org/versions/r0.12/get_started/os_setup.html)
+* pickle
+* tflearn
 
 Use [pip](https://pypi.python.org/pypi/pip) to install any missing dependencies
 
@@ -21,33 +22,22 @@ Usage
 ===========
 
 Simply run 'python3 main.py' and your sentences are on the way!
-
-
-Challenge
-===========
-
-The challenge for this video is write an entirely different script using [TF Learn](http://tflearn.org/) to generate Lord of the Ring style sentences. Check out this very similar [example](https://github.com/tflearn/tflearn/blob/master/examples/nlp/lstm_generator_shakespeare.py), it uses TF Learn to generate Shakespeare-style sentences. Train your model on Lord of the rings text to do something similar! And play around with the hyperparameters to get a more accurate result. Post your GitHub link in the video comments and I'll judge it! 
+To run tensorboard for that juicy play by play, run:
+1. tensorboard --logdir='/tmp/tflearn_logs/Trumpish'
+2. open localhost:6006
+3. profit
 
 Result
 ===========
-The sentences generated weren't very.. Hmm how do you say it? Intelligent? I've listed some below and you probably agree with me. To be honest I didn't expect much of it, but it was fun transforming the code into something that works with other data as well.
+Output (using 128 Neurons per layer) Loss 0.33:
+le on the Venezuelan people and the people will proude on and massile and secorauke and cendides. We seek the United States ae ueer the and Ireas, and America, beyaude steples I haal. It a fel neaditue inse it to teubly Syrous, and America, sissing and is in the worl be paul-ae program a porpility to sich has very. I selure of the people resware is a gratiens that presenukl action. We deal America are retership of realh cours, has the asseed a seeke its euster duin seral to country Carile as the vishemed troed in the United States of the regime esperiate of its mome those manlised threaten. In Syrieve thee fal in thei
 
-Example of output:
+le on the Venezuelan people. We are fortune head. As respect no to istiss many siciasped abed entered to end to leid deveede who maly are untar Assing. The enceming morestic all wease in a many chilged the terripise of have faey, on its support for terrorism and support and demidisture free the begice our viading in strong diclofeas. We are be could and the people all alrime in is the entire Is Seabless lew diy in the destebolited that the warges mullions of the regime and as a replese that exende to sonve the dealth of is mought and freedom, and Congh onares an the United States continues to lead the world in end wor
 
-*about it and the heavy she beukais 'geiloau
-th lo
-tees h rfe ouod anherh Bis wg deeatas!er Taat Cn miiand wheut cpenoryem, fanat mesres owea
-isrighe wise t ts  ore v ratm ta wd iaudlerrd teek fr ohe ntodd ton Eomeedeiawod nh rd.s te bsel pouboniat.ek Wede rh  on oe de h toes we ouopiueuteeo  ih aandee nme .e ̂e nh sorar DneoWed noord qkeacm? fas
-rw'khe n -asor nh gw Gfes Ch nonD roih la fhen bh ileimrn rhot lhide Tol gt wamig thiw weurederolr rodeuner uy s gise nor yl w daeteemgadeav har rh w S th faaf ahed rger any.ed ds vit aaorahraseo-r naud hoewi'np lt n uwr nti riade di tkd! te 
-usid ihe,e bg fh ca oag wd ahosola*
+The rest of the output is in Trumpish.txt
 
-
-For all you non-lotr fans out there. These generated sentences are actually Gandalfish (which is a real language). Check out this [video](https://www.youtube.com/watch?v=9U2pINNSpHE) for a quick introduction to Gandalfish!
-
-P.S. the entire list of sentences is in the 'the_awesome_lotr_sentences_file.txt' file!
+Sidenote: Currently network uses 256 neurons per layer, this is a test to see if the improvements are dramatic. If they are, then output will be updated.
 
 Credits
 ===========
-Credit for the vast majority of code here goes to [suriyadeepan](https://github.com/suriyadeepan). I've merely created a wrapper to get people started. 
-
-Credits for being awesome go to @[Sirajology](https://www.youtube.com/sirajology) for enabling us to learn so much about ML!
+Credit to all mickvanhulst listed and, of course, mickvanhulst himself!
