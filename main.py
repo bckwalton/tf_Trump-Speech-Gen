@@ -11,8 +11,16 @@ from builtins import any as b_any
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 ID = "TrumpGen"
-path = "./text.txt"
+path = "./Trump.txt"
 char_idx_file = 'char_idx.pickle'
+
+#Text fixer
+with open(path, 'rb') as f:
+    lines = [x.decode('utf8').strip() for x in f.readlines()]
+    fix_path = open("./Trump_fix.txt", 'w')
+    for line in lines:
+        fix_path.write(line)
+    path = "./Trump_fix.txt"
 
 maxlen = 25
 
@@ -44,36 +52,36 @@ if b_any(checkpoint_type in x for x in list_of_files):
 
 # Begin Main loop
 with tf.device('/gpu:0'):
-    # Launch tensorboard
+    # Launch tensorboard (This is disabled as it causes Python to crash)
     #os.spawnl(os.P_NOWAIT, "tensorboard --logdir='/tmp/tflearn_logs/" + ID + "'")
     #os.spawnl(os.P_NOWAIT, "start \"\" http://localhost:6006")
     # Building layers in network
     g = tflearn.input_data([None, maxlen, len(char_idx)])
-    g = tflearn.lstm(g, 128, return_seq=True)
+    g = tflearn.lstm(g, 256, return_seq=True)
     g = tflearn.dropout(g, 0.5)
-    g = tflearn.lstm(g, 128, return_seq=True)
+    g = tflearn.lstm(g, 256, return_seq=True)
     g = tflearn.dropout(g, 0.5)
-    g = tflearn.lstm(g, 128)
+    g = tflearn.lstm(g, 256)
     g = tflearn.dropout(g, 0.5)
     g = tflearn.fully_connected(g, len(char_idx), activation='softmax')
     g = tflearn.regression(g, optimizer='adam', loss='categorical_crossentropy',
-                           learning_rate=0.001)
+                           learning_rate=0.01) # changed from 0.001
 
     # stating model is to be used in tflearns sequence generator template
     m = tflearn.SequenceGenerator(g, dictionary=char_idx,
                                   seq_maxlen=maxlen,
                                   clip_gradients=5.0,
-                                  checkpoint_path='model_trump2',
+                                  checkpoint_path='model_trump',
                                   max_checkpoints=10, tensorboard_verbose=3)
     # checking if checkpoint
     if checkpoint is True:
         m.load(target)
     seed = random_sequence_from_textfile(path, maxlen)
     m.fit(X, Y, validation_set=0.1, batch_size=128,
-          n_epoch=100, run_id='Trumpish2')
+          n_epoch=100, run_id='Trumpish')
 
 # Create ten sentences and add them to a file
-the_Trump_file = open('Trumpish2.txt', 'w')
+the_Trump_file = open('Trumpish.txt', 'w')
 i = 0
 for i in range(10):
     Trumping = m.generate(600, temperature=1.0,
