@@ -65,7 +65,7 @@ with tf.device('/gpu:0'):
     g = tflearn.dropout(g, 0.5)
     g = tflearn.fully_connected(g, len(char_idx), activation='softmax')
     g = tflearn.regression(g, optimizer='adam', loss='categorical_crossentropy',
-                           learning_rate=0.01) # changed from 0.001
+                           learning_rate=0.001)
 
     # stating model is to be used in tflearns sequence generator template
     m = tflearn.SequenceGenerator(g, dictionary=char_idx,
