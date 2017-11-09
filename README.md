@@ -36,7 +36,8 @@ le on the Venezuelan people. We are fortune head. As respect no to istiss many s
 
 The rest of the output is in Trumpish.txt
 
-Sidenote: Currently network uses 256 neurons per layer, this is a test to see if the improvements are dramatic. If they are, then output will be updated.
+Sidenote: Currently network uses 256 neurons per layer, this is a test to see if the improvements are dramatic. If they are, then output will be updated. Here is the loss graph for it though in the meantime (things are going well, no plateauing so far):
+![alt text](https://raw.githubusercontent.com/bckwalton/tf_Trump-Speech-Gen/master/Loss%20performance.PNG)
 
 Credits
 ===========
