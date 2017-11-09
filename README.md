@@ -24,7 +24,7 @@ Usage
 Simply run 'python3 main.py' and your sentences are on the way!
 To run tensorboard for that juicy play by play, run:
 1. tensorboard --logdir='/tmp/tflearn_logs/Trumpish'
-2. open localhost:6006
+2. open localhost:6006 in your browser
 3. profit
 
 Result
