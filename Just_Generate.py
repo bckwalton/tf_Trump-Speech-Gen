@@ -9,6 +9,7 @@ import re
 from builtins import any as b_any
 
 tf.logging.set_verbosity(tf.logging.ERROR)
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 ID = "TrumpGen_JG"
 char_idx_file = 'char_idx.pickle'
