@@ -37,7 +37,7 @@ X, Y, char_idx = \
         path, seq_maxlen=maxlen, redun_step=1)
 
 pickle.dump(char_idx, open(char_idx_file, 'wb'))
-tflearn.init_graph(num_cores=8, gpu_memory_fraction=1)
+tflearn.init_graph(num_cores=8, gpu_memory_fraction=.5)
 
 # Instantiating checkpoint finder
 checkpoint = False
@@ -79,18 +79,18 @@ with tf.device('/gpu:0'):
     # checking if checkpoint
     if checkpoint is True:
         m.load(target)
-    seed = random_sequence_from_textfile(path, maxlen)
     m.fit(X, Y, validation_set=0.1, batch_size=128,
-          n_epoch=100, run_id='Trumpish')
+          n_epoch=256, run_id='Trumpish')
     # saving
     m.save('trained_model.tflearn')
 # Create ten sentences and add them to a file
 the_Trump_file = open('Trumpish.txt', 'w')
 i = 0
 for i in range(10):
+    seed = random_sequence_from_textfile(path, maxlen)
     Trumping = m.generate(250, temperature=.5,
                           seq_seed=seed)  # random sentence
     the_Trump_file.write("\r%s\n" % Trumping)
     print('Line: ')
     i = i + 1
-    print("\r%s\n" % Trumping)
+    #print("\r%s\n" % Trumping)
