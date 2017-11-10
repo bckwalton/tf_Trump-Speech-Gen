@@ -11,22 +11,9 @@ from builtins import any as b_any
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 ID = "TrumpGen"
-path = "./Trump.txt"
 char_idx_file = 'char_idx.pickle'
 
-#Text fixer
-with open(path, 'rb') as f:
-    lines = [x.decode('utf8').strip() for x in f.readlines()]
-    fix_path = open("./Trump_fix.txt", 'w')
-    for line in lines:
-        try:
-            fix_path.write(line)
-        except UnicodeEncodeError:
-            print("Line Omitted")
-    path = "./Trump_fix.txt"
-
 maxlen = 25
-
 char_idx = None
 if os.path.isfile(char_idx_file):
     print('Loading previous char_idx')
@@ -35,9 +22,7 @@ if os.path.isfile(char_idx_file):
 X, Y, char_idx = \
     textfile_to_semi_redundant_sequences(
         path, seq_maxlen=maxlen, redun_step=1)
-
 pickle.dump(char_idx, open(char_idx_file, 'wb'))
-tflearn.init_graph(num_cores=8, gpu_memory_fraction=1)
 
 # Instantiating checkpoint finder
 checkpoint = False
@@ -80,17 +65,11 @@ with tf.device('/gpu:0'):
     if checkpoint is True:
         m.load(target)
     seed = random_sequence_from_textfile(path, maxlen)
-    m.fit(X, Y, validation_set=0.1, batch_size=128,
-          n_epoch=100, run_id='Trumpish')
-    # saving
-    m.save('trained_model.tflearn')
-# Create ten sentences and add them to a file
+
+# Create 1 tweet length message
 the_Trump_file = open('Trumpish.txt', 'w')
-i = 0
-for i in range(10):
-    Trumping = m.generate(250, temperature=.5,
-                          seq_seed=seed)  # random sentence
-    the_Trump_file.write("\r%s\n" % Trumping)
-    print('Line: ')
-    i = i + 1
-    print("\r%s\n" % Trumping)
+Trumping = m.generate(250, temperature=.5,
+                      seq_seed=seed)  # random sentence
+the_Trump_file.write("\r%s\n" % Trumping)
+print('Line: ')
+print("\r%s\n" % Trumping)
