@@ -87,7 +87,7 @@ with tf.device('/gpu:0'):
 the_Trump_file = open('Trumpish.txt', 'w')
 i = 0
 for i in range(10):
-    Trumping = m.generate(600, temperature=1.0,
+    Trumping = m.generate(250, temperature=.5,
                           seq_seed=seed)  # random sentence
     the_Trump_file.write("\r%s\n" % Trumping)
     print('Line: ')
