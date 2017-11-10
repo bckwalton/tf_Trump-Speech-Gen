@@ -19,7 +19,10 @@ with open(path, 'rb') as f:
     lines = [x.decode('utf8').strip() for x in f.readlines()]
     fix_path = open("./Trump_fix.txt", 'w')
     for line in lines:
-        fix_path.write(line)
+        try:
+            fix_path.write(line)
+        except UnicodeEncodeError:
+            print("Line Omitted")
     path = "./Trump_fix.txt"
 
 maxlen = 25
@@ -34,7 +37,7 @@ X, Y, char_idx = \
         path, seq_maxlen=maxlen, redun_step=1)
 
 pickle.dump(char_idx, open(char_idx_file, 'wb'))
-tflearn.init_graph(num_cores=8, gpu_memory_fraction=0.5)
+tflearn.init_graph(num_cores=8, gpu_memory_fraction=1)
 
 # Instantiating checkpoint finder
 checkpoint = False
@@ -72,7 +75,7 @@ with tf.device('/gpu:0'):
                                   seq_maxlen=maxlen,
                                   clip_gradients=5.0,
                                   checkpoint_path='model_trump',
-                                  max_checkpoints=10, tensorboard_verbose=3)
+                                  max_checkpoints=2, tensorboard_verbose=3)
     # checking if checkpoint
     if checkpoint is True:
         m.load(target)
