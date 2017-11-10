@@ -19,7 +19,10 @@ with open(path, 'rb') as f:
     lines = [x.decode('utf8').strip() for x in f.readlines()]
     fix_path = open("./Trump_fix.txt", 'w')
     for line in lines:
-        fix_path.write(line)
+        try:
+            fix_path.write(line)
+        except UnicodeEncodeError:
+            print("Line Omitted")
     path = "./Trump_fix.txt"
 
 maxlen = 25
