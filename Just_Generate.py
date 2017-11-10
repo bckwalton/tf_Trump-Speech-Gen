@@ -10,8 +10,9 @@ from builtins import any as b_any
 
 tf.logging.set_verbosity(tf.logging.ERROR)
 
-ID = "TrumpGen"
+ID = "TrumpGen_JG"
 char_idx_file = 'char_idx.pickle'
+path = "./Trump_fix.txt"
 
 maxlen = 25
 char_idx = None
@@ -39,7 +40,7 @@ if b_any(checkpoint_type in x for x in list_of_files):
     target = target[0]
 
 # Begin Main loop
-with tf.device('/gpu:0'):
+with tf.device('/cpu:0'):
     # Launch tensorboard (This is disabled as it causes Python to crash)
     #os.spawnl(os.P_NOWAIT, "tensorboard --logdir='/tmp/tflearn_logs/" + ID + "'")
     #os.spawnl(os.P_NOWAIT, "start \"\" http://localhost:6006")
@@ -59,17 +60,16 @@ with tf.device('/gpu:0'):
     m = tflearn.SequenceGenerator(g, dictionary=char_idx,
                                   seq_maxlen=maxlen,
                                   clip_gradients=5.0,
-                                  checkpoint_path='model_trump',
-                                  max_checkpoints=2, tensorboard_verbose=3)
+                                  checkpoint_path='model_trump_Gen',
+                                  max_checkpoints=1)
     # checking if checkpoint
     if checkpoint is True:
         m.load(target)
     seed = random_sequence_from_textfile(path, maxlen)
 
 # Create 1 tweet length message
-the_Trump_file = open('Trumpish.txt', 'w')
+the_Trump_file = open('Trumpish_Snippet.txt', 'w')
 Trumping = m.generate(250, temperature=.5,
                       seq_seed=seed)  # random sentence
-the_Trump_file.write("\r%s\n" % Trumping)
-print('Line: ')
-print("\r%s\n" % Trumping)
+the_Trump_file.write("\r%s\n" % Trumping + '...')
+print('One line, coming up')
