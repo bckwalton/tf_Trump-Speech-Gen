@@ -70,7 +70,7 @@ with tf.device('/cpu:0'):
 
 # Create 1 tweet length message
 the_Trump_file = open('Trumpish_Snippet.txt', 'w')
-Trumping = m.generate(250, temperature=.5,
+Trumping = m.generate(247, temperature=0.01,
                       seq_seed=seed)  # random sentence
 the_Trump_file.write("\r%s\n" % Trumping + '...')
 print('One line, coming up')
