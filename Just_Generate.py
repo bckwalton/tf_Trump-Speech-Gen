@@ -66,21 +66,40 @@ with tf.device('/cpu:0'):
     # checking if checkpoint
     if checkpoint is True:
         m.load(target)
-    seed = random_sequence_from_textfile(path, maxlen)
+
+    # Setting up input, with safety check to ensure atleast 25 characters
+    foundit = False
+    while foundit != True:
+        seed = input("Give me a seed for the tweet (Give a phrase): ")
+        if len(seed) < 25:
+            with open(path) as f:
+                for line in f:
+                    if seed in line:
+                        foundit = True
+                        line_hold = line.split(seed)
+                        line_hold = seed + line_hold[1]
+                        seed = line_hold
+                        break
+        else:
+            foundit = True
+        if foundit == False:
+            print("Try again")
+    if len(seed) > 25:
+        seed = seed[0:25]
 
 # Create 1 tweet length message
 the_Trump_file = open('Trumpish_Snippet.txt', 'w')
 print('One line, coming up')
-Trumping = m.generate(250, temperature=.01,
+Trumping = m.generate(280, temperature=1,
                       seq_seed=seed)  # random sentence
 the_Trump_file.write("\r%s\n" % Trumping + '...')
 
 
 # Create 1 page paper
-the_Trump_file_page = open('Trumpish_Page.txt', 'w')
-print('One paper, coming up')
-for i in range(3):
-    seed = random_sequence_from_textfile(path, maxlen)
-    Trumping = m.generate(1000, temperature=.01,
-                          seq_seed=seed)  # random sentence
-    the_Trump_file_page.write("\r%s\n" % Trumping)
+# the_Trump_file_page = open('Trumpish_Page.txt', 'w')
+# print('One paper, coming up')
+# for i in range(3):
+#     seed = random_sequence_from_textfile(path, maxlen)
+#     Trumping = m.generate(1000, temperature=.5,
+#                           seq_seed=seed)  # random sentence
+#     the_Trump_file_page.write("\r%s\n" % Trumping)

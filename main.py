@@ -79,7 +79,7 @@ with tf.device('/gpu:0'):
     # checking if checkpoint
     if checkpoint is True:
         m.load(target)
-    m.fit(X, Y, validation_set=0.1, batch_size=128,
+    m.fit(X, Y, validation_set=0.1, batch_size=280,
           n_epoch=256, run_id='Trumpish')
     # saving
     m.save('trained_model')
