@@ -70,7 +70,21 @@ with tf.device('/cpu:0'):
 
 # Create 1 tweet length message
 the_Trump_file = open('Trumpish_Snippet.txt', 'w')
+<<<<<<< HEAD
 Trumping = m.generate(247, temperature=0.01,
+=======
+print('One line, coming up')
+Trumping = m.generate(250, temperature=.01,
+>>>>>>> 1fbc01fec7b9f6dc24b3602bc8067e577cf9d6fa
                       seq_seed=seed)  # random sentence
 the_Trump_file.write("\r%s\n" % Trumping + '...')
-print('One line, coming up')
+
+
+# Create 1 page paper
+the_Trump_file_page = open('Trumpish_Page.txt', 'w')
+print('One paper, coming up')
+for i in range(3):
+    seed = random_sequence_from_textfile(path, maxlen)
+    Trumping = m.generate(1000, temperature=.01,
+                          seq_seed=seed)  # random sentence
+    the_Trump_file_page.write("\r%s\n" % Trumping)

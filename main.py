@@ -82,7 +82,7 @@ with tf.device('/gpu:0'):
     m.fit(X, Y, validation_set=0.1, batch_size=128,
           n_epoch=256, run_id='Trumpish')
     # saving
-    m.save('trained_model.tflearn')
+    m.save('trained_model')
 # Create ten sentences and add them to a file
 the_Trump_file = open('Trumpish.txt', 'w')
 i = 0
