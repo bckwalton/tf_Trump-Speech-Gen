@@ -71,17 +71,21 @@ with tf.device('/cpu:0'):
     foundit = False
     while foundit != True:
         seed = input("Give me a seed for the tweet (Give a phrase): ")
-        if len(seed) < 25:
-            with open(path) as f:
-                for line in f:
-                    if seed in line:
-                        foundit = True
-                        line_hold = line.split(seed)
-                        line_hold = seed + line_hold[1]
-                        seed = line_hold
-                        break
-        else:
+        if not seed:
             foundit = True
+            seed = random_sequence_from_textfile(path, maxlen)
+        else:
+            if len(seed) < 24:
+                with open(path) as f:
+                    for line in f:
+                        if seed in line:
+                            foundit = True
+                            line_hold = line.split(seed)
+                            line_hold = seed + line_hold[1]
+                            seed = line_hold
+                            break
+            else:
+                foundit = True
         if foundit == False:
             print("Try again")
     if len(seed) > 25:
@@ -90,7 +94,7 @@ with tf.device('/cpu:0'):
 # Create 1 tweet length message
 the_Trump_file = open('Trumpish_Snippet.txt', 'w')
 print('One line, coming up')
-Trumping = m.generate(280, temperature=1,
+Trumping = m.generate(280, temperature=.5,
                       seq_seed=seed)  # random sentence
 the_Trump_file.write("\r%s\n" % Trumping + '...')
 
